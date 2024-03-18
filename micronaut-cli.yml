@@ -1,0 +1,6 @@
+applicationType: default
+defaultPackage: app.kerrlab.subspace
+testFramework: kotest
+sourceLanguage: kotlin
+buildTool: gradle_kotlin
+features: [ app-name, config4k, discovery-client, github-workflow-ci, github-workflow-graal-docker-registry, graalvm, gradle, http-client, http-client-test, jib, kapt, kotest, kotlin, kotlin-application, kotlin-extension-functions, logback, micronaut-aot, micronaut-build, micronaut-http-validation, netty-server, openapi, readme, retry, serialization-jackson, shade, static-resources, swagger-ui ]
