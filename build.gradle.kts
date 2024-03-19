@@ -1,15 +1,24 @@
+import com.bmuschko.gradle.docker.DockerRegistryCredentials
+
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.9.23"
     id("org.jetbrains.kotlin.kapt") version "1.9.23"
     id("org.jetbrains.kotlin.plugin.allopen") version "1.9.23"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("io.micronaut.application") version "4.3.4"
-    id("com.google.cloud.tools.jib") version "2.8.0"
     id("io.micronaut.aot") version "4.3.4"
 }
 
-version = "0.1"
+version = "0.1.0-SNAPSHOT"
 group = "app.kerrlab.subspace"
+
+val javaVersion = "21"
+val dockerRegistryUrl = System.getenv("DOCKER_REGISTRY_URL")
+val dockerRepositoryPath = System.getenv("DOCKER_REPOSITORY_PATH")
+val dockerImage = System.getenv("DOCKER_IMAGE") ?: project.name
+val baseImage = "azul/zulu-openjdk-alpine:21-latest"
+val dockeruser = System.getenv("DOCKER_USERNAME")
+val dockerpass = System.getenv("DOCKER_PASSWORD")
 
 val kotlinVersion = project.properties.get("kotlinVersion")
 repositories {
@@ -38,27 +47,22 @@ application {
     mainClass.set("app.kerrlab.subspace.ApplicationKt")
 }
 java {
-    sourceCompatibility = JavaVersion.toVersion("17")
+    sourceCompatibility = JavaVersion.toVersion(javaVersion)
 }
 
 kotlin {
     jvmToolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(javaVersion))
     }
 }
 
 tasks {
     dockerBuild {
-        images.set(listOf("${System.getenv("DOCKER_IMAGE") ?: project.name}:${project.version}"))
+        images.set(listOf("${dockerRepositoryPath}/${dockerImage}:${project.version}"))
     }
 
     dockerBuildNative {
-        images.set(listOf("${System.getenv("DOCKER_IMAGE") ?: project.name}:${project.version}"))
-    }
-    jib {
-        to {
-            image = "gcr.io/myapp/jib-image"
-        }
+        images.set(listOf("${dockerRepositoryPath}/${dockerImage}-native:${project.version}"))
     }
 }
 graalvmNative.toolchainDetection.set(false)
@@ -83,11 +87,29 @@ micronaut {
 }
 
 tasks.named<io.micronaut.gradle.docker.MicronautDockerfile>("dockerfile") {
-    baseImage("eclipse-temurin:21-jre-jammy")
+    baseImage(baseImage.get())
 }
 
 tasks.named<io.micronaut.gradle.docker.NativeImageDockerfile>("dockerfileNative") {
-    jdkVersion.set("21")
+    jdkVersion.set(javaVersion)
 }
+
+tasks.named<com.bmuschko.gradle.docker.tasks.image.DockerPushImage>("dockerPush") {
+    registryCredentials {
+        username = dockeruser
+        password = dockerpass
+        url = dockerRegistryUrl
+    }
+}
+
+tasks.named<com.bmuschko.gradle.docker.tasks.image.DockerPushImage>("dockerPushNative") {
+    registryCredentials {
+        username = dockeruser
+        password = dockerpass
+        url = dockerRegistryUrl
+    }
+}
+
+
 
 
