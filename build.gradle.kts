@@ -1,5 +1,3 @@
-import com.bmuschko.gradle.docker.DockerRegistryCredentials
-
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.9.23"
     id("org.jetbrains.kotlin.kapt") version "1.9.23"
@@ -20,7 +18,7 @@ val baseImage = "azul/zulu-openjdk-alpine:21-latest"
 val dockeruser = System.getenv("DOCKER_USERNAME")
 val dockerpass = System.getenv("DOCKER_PASSWORD")
 
-val kotlinVersion = project.properties.get("kotlinVersion")
+val kotlinVersion: String by project
 repositories {
     mavenCentral()
 }
@@ -37,6 +35,7 @@ dependencies {
     implementation("io.micronaut.serde:micronaut-serde-jackson")
     implementation("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
+
     compileOnly("io.micronaut.openapi:micronaut-openapi-annotations")
     runtimeOnly("ch.qos.logback:logback-classic")
     runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
