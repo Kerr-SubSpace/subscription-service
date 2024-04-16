@@ -1,10 +1,16 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.9.23"
     id("org.jetbrains.kotlin.kapt") version "1.9.23"
     id("org.jetbrains.kotlin.plugin.allopen") version "1.9.23"
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("io.micronaut.application") version "4.3.4"
-    id("io.micronaut.aot") version "4.3.4"
+    id("io.micronaut.application") version "4.3.6"
+    id("io.micronaut.aot") version "4.3.6"
+    id("org.jetbrains.kotlin.plugin.spring") version "1.9.23"
+    kotlin("plugin.jpa") version "1.9.23"
+    kotlin("plugin.noarg") version "1.9.23"
+    id("org.liquibase.gradle") version "2.2.1"
 }
 
 version = "0.1.0-SNAPSHOT"
@@ -23,6 +29,7 @@ repositories {
     mavenCentral()
 }
 
+val hibernateVersion = "6.4.4.Final"
 dependencies {
     kapt("io.micronaut:micronaut-http-validation")
     kapt("io.micronaut.openapi:micronaut-openapi")
@@ -34,11 +41,20 @@ dependencies {
     implementation("io.micronaut.kotlin:micronaut-kotlin-runtime")
     implementation("io.micronaut.serde:micronaut-serde-jackson")
     implementation("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}")
 
-    compileOnly("io.micronaut.openapi:micronaut-openapi-annotations")
-    runtimeOnly("ch.qos.logback:logback-classic")
+    implementation("org.hibernate.orm:hibernate-core:$hibernateVersion")
+    implementation("io.micronaut.sql:micronaut-hibernate-jpa")
+    implementation("io.micronaut.sql:micronaut-jdbc-hikari")
+    implementation("io.micronaut.data:micronaut-data-tx-hibernate")
+    implementation("io.micronaut.data:micronaut-data-processor")
+    implementation("io.micronaut.data:micronaut-data-hibernate-jpa")
+    implementation("io.micronaut.validation:micronaut-validation")
+    runtimeOnly("com.h2database:h2")
     runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
+    annotationProcessor("io.micronaut.validation:micronaut-validation-processor")
+    annotationProcessor("io.micronaut:micronaut-inject-java")
+    compileOnly("io.micronaut.openapi:micronaut-openapi-annotations")
 }
 
 
@@ -109,6 +125,14 @@ tasks.named<com.bmuschko.gradle.docker.tasks.image.DockerPushImage>("dockerPushN
     }
 }
 
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        freeCompilerArgs += "-Xjsr305=strict"
+    }
+}
 
-
-
+allOpen {
+    annotation("jakarta.persistence.Entity")
+    annotation("jakarta.inject.Singleton")
+    annotation("io.micronaut.http.annotation.Controller")
+}
