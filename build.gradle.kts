@@ -8,21 +8,21 @@ plugins {
     id("io.micronaut.application") version "4.3.6"
     id("io.micronaut.aot") version "4.3.6"
     id("org.jetbrains.kotlin.plugin.spring") version "1.9.23"
+    id("com.google.cloud.tools.jib") version "3.4.2"
     kotlin("plugin.jpa") version "1.9.23"
     kotlin("plugin.noarg") version "1.9.23"
-    id("org.liquibase.gradle") version "2.2.1"
 }
 
 version = "0.1.0-SNAPSHOT"
 group = "app.kerrlab.subspace"
 
 val javaVersion = "21"
-val dockerRegistryUrl = System.getenv("DOCKER_REGISTRY_URL")
-val dockerRepositoryPath = System.getenv("DOCKER_REPOSITORY_PATH")
-val dockerImage = System.getenv("DOCKER_IMAGE") ?: project.name
-val baseImage = "azul/zulu-openjdk-alpine:21-latest"
 val dockeruser = System.getenv("DOCKER_USERNAME")
 val dockerpass = System.getenv("DOCKER_PASSWORD")
+val dockerRegistryUrl = System.getenv("DOCKER_REGISTRY_URL")
+val dockerRepositoryPath = System.getenv("DOCKER_REPOSITORY_PATH")
+val dockerImage = System.getenv("DOCKER_IMAGE") ?: "${dockeruser}/project.name"
+val baseImage = "azul/zulu-openjdk-alpine:21-latest"
 
 val kotlinVersion: String by project
 repositories {
@@ -42,7 +42,6 @@ dependencies {
     implementation("io.micronaut.serde:micronaut-serde-jackson")
     implementation("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}")
-
     implementation("org.hibernate.orm:hibernate-core:$hibernateVersion")
     implementation("io.micronaut.sql:micronaut-hibernate-jpa")
     implementation("io.micronaut.sql:micronaut-jdbc-hikari")
@@ -72,12 +71,15 @@ kotlin {
 }
 
 tasks {
-    dockerBuild {
-        images.set(listOf("${dockerRepositoryPath}/${dockerImage}:${project.version}"))
+    jibDockerBuild {
+
+    }
+    build {
+        dependsOn(jibDockerBuild)
     }
 
     dockerBuildNative {
-        images.set(listOf("${dockerRepositoryPath}/${dockerImage}-native:${project.version}"))
+        images.set(listOf("${dockerImage}-native:${project.version}"))
     }
 }
 graalvmNative.toolchainDetection.set(false)
@@ -135,4 +137,18 @@ allOpen {
     annotation("jakarta.persistence.Entity")
     annotation("jakarta.inject.Singleton")
     annotation("io.micronaut.http.annotation.Controller")
+}
+
+jib {
+    from {
+        image = baseImage
+    }
+    to {
+
+        image = "${dockerImage}:${project.version}"
+        auth {
+            username = dockeruser
+            password = dockerpass
+        }
+    }
 }
