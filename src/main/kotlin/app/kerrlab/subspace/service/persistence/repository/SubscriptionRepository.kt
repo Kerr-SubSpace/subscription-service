@@ -6,7 +6,7 @@ interface SubscriptionRepository {
 
     fun findById(subscriptionId: Long): SubscriptionModel?
 
-    fun find(subscriptionId: SubscriptionModel): SubscriptionModel?
+    fun find(model: SubscriptionModel): SubscriptionModel?
 
     fun findByName(subscriptionName: String): SubscriptionModel?
 
