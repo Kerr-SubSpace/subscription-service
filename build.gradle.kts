@@ -18,6 +18,7 @@ plugins {
 semver {
     initialVersion("0.1.0")
     versionModifier { nextMinor() }
+    tagPrefix("")
 }
 
 version = semver.version
