@@ -1,15 +1,21 @@
-name: Publish GraalVM Image to DockerHub
+name: Tag Version
 
 env:
-  JAVA_VERSION: '21'
+  JAVA_VERSION: 21
 
-on: workflow_dispatch
+on:
+  push:
+    branches: [ main ]
 
+permissions:
+  contents: read
 jobs:
-  publish:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/cache@v4
         with:
           path: |
@@ -18,10 +24,5 @@ jobs:
             ~/.m2/repository
           key: ${{ runner.os }}-gradle-test-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle-test-
-      - name: Set up JDK ${{env.JAVA_VERSION}}
-        uses: actions/setup-java@v4
-        with:
-          java-version: ${{env.JAVA_VERSION}}
-          distribution: 'zulu'
-      - name: Build Docker Image
-        run: ./gradlew jib
+      - name: Build with Gradle
+        run: ./gradlew semver:createAndPushVersionTag
