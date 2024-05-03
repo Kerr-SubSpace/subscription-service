@@ -4,25 +4,34 @@ env:
   JAVA_VERSION: 21
 
 on:
-  push:
+  workflow_run:
+    workflows: [ CI Build ]
+    types: [ completed ]
     branches: [ main ]
 
 permissions:
   contents: read
 jobs:
-  build:
+  tag:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/cache@v4
+      - name: Set up JDK ${{env.JAVA_VERSION}}
+        uses: actions/setup-java@v4
         with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-            ~/.m2/repository
-          key: ${{ runner.os }}-gradle-test-${{ hashFiles('**/*.gradle') }}
-          restore-keys: ${{ runner.os }}-gradle-test-
-      - name: Build with Gradle
-        run: ./gradlew semver:createAndPushVersionTag
+          java-version: ${{env.JAVA_VERSION}}
+          distribution: 'zulu'
+      - name: Validate Gradle wrapper
+        uses: gradle/actions/wrapper-validation@v3
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+      - name: Make Gradle executable
+        run: chmod +x gradlew
+      - name: Print current version
+        run: ./gradlew currentSemver
+      - name: Create and push tag
+        env:
+          GH_TOKEN: ${{ secrets.PAT }}
+        run: ./gradlew createAndPushVersionTag
