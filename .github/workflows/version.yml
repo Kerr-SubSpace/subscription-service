@@ -17,6 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          token: ${{ secrets.PAT }}
           fetch-depth: 0
       - name: Set up JDK ${{env.JAVA_VERSION}}
         uses: actions/setup-java@v4
@@ -32,6 +33,4 @@ jobs:
       - name: Print current version
         run: ./gradlew currentSemver
       - name: Create and push tag
-        env:
-          GH_TOKEN: ${{ secrets.PAT }}
         run: ./gradlew createAndPushVersionTag
