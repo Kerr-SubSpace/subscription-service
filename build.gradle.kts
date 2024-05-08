@@ -1,4 +1,3 @@
-import com.figure.gradle.semver.external.VersionCalculatorStrategy
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -47,15 +46,15 @@ dependencies {
     implementation("io.micronaut.kotlin:micronaut-kotlin-extension-functions")
     implementation("io.micronaut.kotlin:micronaut-kotlin-runtime")
     implementation("io.micronaut.serde:micronaut-serde-jackson")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}")
-    implementation("org.hibernate.orm:hibernate-core:$hibernateVersion")
     implementation("io.micronaut.sql:micronaut-hibernate-jpa")
     implementation("io.micronaut.sql:micronaut-jdbc-hikari")
     implementation("io.micronaut.data:micronaut-data-tx-hibernate")
     implementation("io.micronaut.data:micronaut-data-processor")
     implementation("io.micronaut.data:micronaut-data-hibernate-jpa")
     implementation("io.micronaut.validation:micronaut-validation")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}")
+    implementation("org.hibernate.orm:hibernate-core:$hibernateVersion")
     runtimeOnly("com.h2database:h2")
     runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
     annotationProcessor("io.micronaut.validation:micronaut-validation-processor")
@@ -79,7 +78,7 @@ kotlin {
 
 tasks {
     build {
-        dependsOn(jibDockerBuild)
+//        dependsOn(jibDockerBuild)
     }
 
     dockerBuildNative {

@@ -1,6 +1,7 @@
-package app.kerrlab.subspace.service.persistence.repository
+package app.kerrlab.subspace.persistence.repository
 
-import app.kerrlab.subspace.service.persistence.model.SubscriptionModel
+import app.kerrlab.subspace.core.repository.SubscriptionRepository
+import app.kerrlab.subspace.persistence.model.SubscriptionModel
 import io.micronaut.transaction.annotation.ReadOnly
 import io.micronaut.transaction.annotation.Transactional
 import jakarta.inject.Singleton

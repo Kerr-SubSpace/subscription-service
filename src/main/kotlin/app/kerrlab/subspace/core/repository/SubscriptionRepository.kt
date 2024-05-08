@@ -1,6 +1,6 @@
-package app.kerrlab.subspace.service.persistence.repository
+package app.kerrlab.subspace.core.repository
 
-import app.kerrlab.subspace.service.persistence.model.SubscriptionModel
+import app.kerrlab.subspace.persistence.model.SubscriptionModel
 
 interface SubscriptionRepository {
 
