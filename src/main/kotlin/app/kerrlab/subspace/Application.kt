@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.info.*
 @OpenAPIDefinition(
     info = Info(
         title = "subscription-service",
-        version = "0.0"
+        version = "0.1"
     )
 )
 object Api {
