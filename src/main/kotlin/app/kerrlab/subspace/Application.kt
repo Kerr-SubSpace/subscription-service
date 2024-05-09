@@ -1,19 +1,25 @@
 package app.kerrlab.subspace
 
-import io.micronaut.runtime.Micronaut.run
-import io.swagger.v3.oas.annotations.*
-import io.swagger.v3.oas.annotations.info.*
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.runApplication
+import org.springframework.context.annotation.Bean
 
-@OpenAPIDefinition(
-    info = Info(
-        title = "subscription-service",
-        version = "0.1"
-    )
-)
-object Api {
+@SpringBootApplication
+class Application {
+
+    @Bean
+    fun configureObjectMapper(): ObjectMapper {
+        val objectMapper = jacksonObjectMapper()
+        objectMapper.registerKotlinModule()
+        objectMapper.registerModule(JavaTimeModule())
+        return objectMapper
+    }
 }
 
 fun main(args: Array<String>) {
-    run(*args)
+    runApplication<Application>(*args)
 }
-

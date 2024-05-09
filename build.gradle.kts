@@ -1,17 +1,31 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+object Versions {
+    const val JAVA = "21"
+    const val KOTLIN = "1.9.24"
+    const val GRADLE = "8.7"
+    const val JIB = "3.4.2"
+    const val SEMVER_PLUGIN = "1.10.0"
+    const val STRIKT = "0.34.1"
+    const val ARROW = "1.2.4"
+    const val MOCKITO = "5.3.1"
+    const val JACKSON = "2.17.1"
+}
+
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.9.23"
-    id("org.jetbrains.kotlin.kapt") version "1.9.23"
-    id("org.jetbrains.kotlin.plugin.allopen") version "1.9.23"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("io.micronaut.application") version "4.3.6"
-    id("io.micronaut.aot") version "4.3.6"
-    id("org.jetbrains.kotlin.plugin.spring") version "1.9.23"
+    kotlin("jvm")
+    kotlin("kapt") version "1.9.24"
+    kotlin("plugin.noarg") version "1.9.24"
+    kotlin("plugin.allopen") version "1.9.24"
+    kotlin("plugin.spring") version "1.9.24"
+    kotlin("plugin.jpa") version "1.9.24"
     id("com.google.cloud.tools.jib") version "3.4.2"
     id("com.figure.gradle.semver-plugin") version "1.10.0"
-    kotlin("plugin.jpa") version "1.9.23"
-    kotlin("plugin.noarg") version "1.9.23"
+    id("org.graalvm.buildtools.native") version "0.9.28"
+    id("org.hibernate.orm") version "6.4.4.Final"
+
+    id("org.springframework.boot") version "3.2.5"
+    id("io.spring.dependency-management") version "1.1.4"
 }
 
 semver {
@@ -23,141 +37,112 @@ semver {
 version = semver.version
 group = "app.kerrlab.subspace"
 
-val javaVersion = "21"
-val dockeruser = System.getenv("DOCKER_USERNAME")
-val dockerpass = System.getenv("DOCKER_PASSWORD")
-val dockerRegistryUrl = System.getenv("DOCKER_REGISTRY_URL")
-val dockerImage = System.getenv("DOCKER_IMAGE") ?: "${dockeruser}/project.name"
-val baseImage = "azul/zulu-openjdk-alpine:21-latest"
+object DockerProperties {
+    val dockeruser = System.getenv("DOCKER_USERNAME")
+    val dockerpass = System.getenv("DOCKER_PASSWORD")
+    val dockerRegistryUrl = System.getenv("DOCKER_REGISTRY_URL")
+    val dockerImage = System.getenv("DOCKER_IMAGE") ?: "${dockeruser}/project.name"
+    const val BASE_IMAGE = "azul/zulu-openjdk-alpine:21-latest"
+}
 
-val kotlinVersion: String by project
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
-val hibernateVersion = "6.4.4.Final"
+val quarkusPlatformGroupId: String by project
+val quarkusPlatformArtifactId: String by project
+val quarkusPlatformVersion: String by project
+
 dependencies {
-    kapt("io.micronaut:micronaut-http-validation")
-    kapt("io.micronaut.openapi:micronaut-openapi")
-    kapt("io.micronaut.serde:micronaut-serde-processor")
-    implementation("io.micronaut:micronaut-http-client")
-    implementation("io.micronaut:micronaut-retry")
-    implementation("io.micronaut.discovery:micronaut-discovery-client")
-    implementation("io.micronaut.kotlin:micronaut-kotlin-extension-functions")
-    implementation("io.micronaut.kotlin:micronaut-kotlin-runtime")
-    implementation("io.micronaut.serde:micronaut-serde-jackson")
-    implementation("io.micronaut.sql:micronaut-hibernate-jpa")
-    implementation("io.micronaut.sql:micronaut-jdbc-hikari")
-    implementation("io.micronaut.data:micronaut-data-tx-hibernate")
-    implementation("io.micronaut.data:micronaut-data-processor")
-    implementation("io.micronaut.data:micronaut-data-hibernate-jpa")
-    implementation("io.micronaut.validation:micronaut-validation")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}")
-    implementation("org.hibernate.orm:hibernate-core:$hibernateVersion")
+    // Spring
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-quartz")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+    // Serialization
+    implementation("com.fasterxml.jackson.core:jackson-core:${Versions.JACKSON}")
+    implementation("com.fasterxml.jackson.core:jackson-databind:${Versions.JACKSON}")
+    implementation("com.fasterxml.jackson.core:jackson-annotations:${Versions.JACKSON}")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
+    // Other
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:${Versions.KOTLIN}")
+    implementation("io.arrow-kt:arrow-core:${Versions.ARROW}")
+    // DB Drivers
     runtimeOnly("com.h2database:h2")
-    runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
-    annotationProcessor("io.micronaut.validation:micronaut-validation-processor")
-    annotationProcessor("io.micronaut:micronaut-inject-java")
-    compileOnly("io.micronaut.openapi:micronaut-openapi-annotations")
+    runtimeOnly("org.postgresql:postgresql")
+    // Test
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.boot:spring-boot-testcontainers")
+    testImplementation("org.testcontainers:junit-jupiter")
+    testImplementation("org.testcontainers:postgresql")
+    testImplementation("io.rest-assured:rest-assured")
+    testImplementation("io.strikt:strikt-core:${Versions.STRIKT}")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:${Versions.MOCKITO}")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
-
-application {
-    mainClass.set("app.kerrlab.subspace.ApplicationKt")
-}
 java {
-    sourceCompatibility = JavaVersion.toVersion(javaVersion)
-}
-
-kotlin {
-    jvmToolchain {
-        languageVersion.set(JavaLanguageVersion.of(javaVersion))
-    }
 }
 
 tasks {
     build {
+//        TODO: jib image
 //        dependsOn(jibDockerBuild)
     }
 
-    dockerBuildNative {
-        images.set(listOf("${dockerImage}-native:${project.version}"))
-    }
+//    dockerBuildNative {
+//    TODO: native image
+//        images.set(listOf("${dockerImage}-native:${project.version}"))
+//    }
 
     wrapper {
-        gradleVersion = "8.7"
+        gradleVersion = Versions.GRADLE
         distributionType = Wrapper.DistributionType.ALL
     }
 }
-graalvmNative.toolchainDetection.set(false)
-micronaut {
-    runtime("netty")
-    testRuntime("kotest5")
-    processing {
-        incremental(true)
-        annotations("app.kerrlab.subspace.*")
-    }
-    aot {
-        // Please review carefully the optimizations enabled below
-        // Check https://micronaut-projects.github.io/micronaut-aot/latest/guide/ for more details
-        optimizeServiceLoading.set(false)
-        convertYamlToJava.set(false)
-        precomputeOperations.set(true)
-        cacheEnvironment.set(true)
-        optimizeClassLoading.set(true)
-        deduceEnvironment.set(true)
-        optimizeNetty.set(true)
-    }
-}
 
-tasks.named<io.micronaut.gradle.docker.MicronautDockerfile>("dockerfile") {
-    baseImage(baseImage.get())
-}
-
-tasks.named<io.micronaut.gradle.docker.NativeImageDockerfile>("dockerfileNative") {
-    jdkVersion.set(javaVersion)
-}
-
-tasks.named<com.bmuschko.gradle.docker.tasks.image.DockerPushImage>("dockerPush") {
-    registryCredentials {
-        username = dockeruser
-        password = dockerpass
-        url = dockerRegistryUrl
-    }
-}
-
-tasks.named<com.bmuschko.gradle.docker.tasks.image.DockerPushImage>("dockerPushNative") {
-    registryCredentials {
-        username = dockeruser
-        password = dockerpass
-        url = dockerRegistryUrl
-    }
+allOpen {
+    annotation("jakarta.ws.rs.Path")
+    annotation("jakarta.enterprise.context.ApplicationScoped")
+    annotation("jakarta.persistence.Entity")
+    annotation("jakarta.inject.Singleton")
 }
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs += "-Xjsr305=strict"
+        jvmTarget = Versions.JAVA
+        javaParameters = true
     }
 }
 
-allOpen {
-    annotation("jakarta.persistence.Entity")
-    annotation("jakarta.inject.Singleton")
-    annotation("io.micronaut.http.annotation.Controller")
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
 
 jib {
     from {
-        image = baseImage
+        image = DockerProperties.BASE_IMAGE
     }
     to {
-        image = "${dockerImage}:${project.version}"
+        image = "${DockerProperties.dockerImage}:${project.version}"
         auth {
-            username = dockeruser
-            password = dockerpass
+            username = DockerProperties.dockeruser
+            password = DockerProperties.dockerpass
         }
         tags = setOf("latest")
     }
     container.creationTime = "USE_CURRENT_TIMESTAMP"
+}
+kotlin {
+    jvmToolchain(21)
+}
+
+hibernate {
+    enhancement {
+        enableAssociationManagement.set(true)
+    }
 }
