@@ -1,8 +1,10 @@
+import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 object Versions {
     const val JAVA = "21"
-    const val KOTLIN = "1.9.24"
+    const val KOTLIN = "2.0.0"
     const val GRADLE = "8.7"
     const val JIB = "3.4.2"
     const val SEMVER_PLUGIN = "1.10.0"
@@ -14,11 +16,10 @@ object Versions {
 
 plugins {
     kotlin("jvm")
-    kotlin("kapt") version "1.9.24"
-    kotlin("plugin.noarg") version "1.9.24"
-    kotlin("plugin.allopen") version "1.9.24"
-    kotlin("plugin.spring") version "1.9.24"
-    kotlin("plugin.jpa") version "1.9.24"
+    kotlin("plugin.noarg") version "2.0.0"
+    kotlin("plugin.allopen") version "2.0.0"
+    kotlin("plugin.spring") version "2.0.0"
+    kotlin("plugin.jpa") version "2.0.0"
     id("com.google.cloud.tools.jib") version "3.4.2"
     id("com.figure.gradle.semver-plugin") version "1.10.0"
     id("org.graalvm.buildtools.native") version "0.9.28"
@@ -112,10 +113,9 @@ allOpen {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        freeCompilerArgs += "-Xjsr305=strict"
-        jvmTarget = Versions.JAVA
-        javaParameters = true
+    compilerOptions {
+        jvmTarget.set(JVM_21)
+        freeCompilerArgs.add("-Xjsr305=strict")
     }
 }
 
