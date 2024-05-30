@@ -27,6 +27,7 @@ plugins {
 
     id("org.springframework.boot") version "3.2.5"
     id("io.spring.dependency-management") version "1.1.4"
+    id("org.sonarqube") version "4.4.1.3373"
 }
 
 semver {
@@ -144,5 +145,13 @@ kotlin {
 hibernate {
     enhancement {
         enableAssociationManagement.set(true)
+    }
+}
+
+sonar {
+    properties {
+        property("sonar.projectKey", "Kerr-SubSpace_subscription-service")
+        property("sonar.organization", "kerr-subspace")
+        property("sonar.host.url", "https://sonarcloud.io")
     }
 }
