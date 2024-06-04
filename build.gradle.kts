@@ -20,7 +20,7 @@ plugins {
     kotlin("plugin.allopen") version "2.0.0"
     kotlin("plugin.spring") version "2.0.0"
     kotlin("plugin.jpa") version "2.0.0"
-    id("com.google.cloud.tools.jib") version "3.4.2"
+    id("com.google.cloud.tools.jib") version "3.4.3"
     id("com.figure.gradle.semver-plugin") version "1.10.0"
     id("org.graalvm.buildtools.native") version "0.9.28"
     id("org.hibernate.orm") version "6.4.4.Final"
