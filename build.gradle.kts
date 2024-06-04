@@ -26,7 +26,7 @@ plugins {
     id("org.hibernate.orm") version "6.4.4.Final"
 
     id("org.springframework.boot") version "3.2.5"
-    id("io.spring.dependency-management") version "1.1.4"
+    id("io.spring.dependency-management") version "1.1.5"
 }
 
 semver {
