@@ -1,6 +1,9 @@
-import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget.*
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.io.ByteArrayOutputStream
+import java.time.OffsetDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 object Versions {
     const val JAVA = "21"
@@ -88,10 +91,32 @@ dependencies {
 java {
 }
 
+val gitHash: String by lazy {
+    val stdout = ByteArrayOutputStream()
+    rootProject.exec {
+        commandLine("git", "rev-parse", "--verify", "--short", "HEAD")
+        standardOutput = stdout
+    }
+    stdout.toString().trim()
+}
+
+val gitTimestamp: OffsetDateTime by lazy {
+    val stdout = ByteArrayOutputStream()
+    rootProject.exec {
+        commandLine("git", "show", "-s", "--format=%ci")
+        standardOutput = stdout
+    }
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss Z")
+    OffsetDateTime.parse(stdout.toString().trim(), formatter)
+}
+
+val imageTimestamp: String by lazy {
+    gitTimestamp.atZoneSameInstant(ZoneId.of("UTC")).format(DateTimeFormatter.ISO_DATE_TIME)
+}
+
 tasks {
     build {
-//        TODO: jib image
-//        dependsOn(jibDockerBuild)
+        dependsOn(jibDockerBuild)
     }
 
 //    dockerBuildNative {
@@ -135,7 +160,9 @@ jib {
         }
         tags = setOf("latest")
     }
-    container.creationTime = "USE_CURRENT_TIMESTAMP"
+    container {
+        creationTime = imageTimestamp
+    }
 }
 kotlin {
     jvmToolchain(21)
