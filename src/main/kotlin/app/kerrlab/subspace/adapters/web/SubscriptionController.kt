@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*
 import java.net.URI
 
 @RestController
+@CrossOrigin(originPatterns = ["*"])
 class SubscriptionController(@Autowired val subscriptionService: SubscriptionService) {
     companion object {
         const val SUBSCRIPTIONS_PATH = "/subscriptions"
