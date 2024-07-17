@@ -1,5 +1,4 @@
-import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget.*
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 object Versions {
@@ -12,6 +11,7 @@ object Versions {
     const val ARROW = "1.2.4"
     const val MOCKITO = "5.3.1"
     const val JACKSON = "2.17.1"
+    const val KOTEST = "5.9.1"
 }
 
 plugins {
@@ -82,6 +82,10 @@ dependencies {
     testImplementation("io.rest-assured:rest-assured")
     testImplementation("io.strikt:strikt-core:${Versions.STRIKT}")
     testImplementation("org.mockito.kotlin:mockito-kotlin:${Versions.MOCKITO}")
+    testImplementation("io.kotest:kotest-runner-junit5:${Versions.KOTEST}")
+    testImplementation("io.kotest:kotest-assertions-core:${Versions.KOTEST}")
+    testImplementation("io.kotest.extensions:kotest-assertions-arrow:1.4.0")
+    testImplementation("io.kotest.extensions:kotest-extensions-spring:1.3.0")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
