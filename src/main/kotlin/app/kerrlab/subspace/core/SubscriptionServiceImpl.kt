@@ -8,7 +8,6 @@ import app.kerrlab.subspace.adapters.web.model.UpdateSubscriptionDto
 import app.kerrlab.subspace.ports.persistence.SubscriptionRepository
 import app.kerrlab.subspace.ports.web.SubscriptionService
 import arrow.core.Either
-import arrow.core.left
 import org.springframework.stereotype.Service
 
 @Service
@@ -38,7 +37,7 @@ class SubscriptionServiceImpl(
 
     override fun getAll(): Either<SubscriptionError, List<SubscriptionDetailsDto>> {
         return subscriptionRepository.findAll().fold({ error ->
-            return error.left()
+            return Either.Left(error)
         }, { data ->
             data.map { it.toSubscription().toSubscriptionDetails() }.let { Either.Right(it) }
 
