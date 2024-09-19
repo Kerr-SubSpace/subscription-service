@@ -25,7 +25,7 @@ plugins {
     id("org.graalvm.buildtools.native") version "0.10.3"
     id("org.hibernate.orm") version "6.6.1.Final"
 
-    id("org.springframework.boot") version "3.3.3"
+    id("org.springframework.boot") version "3.3.4"
     id("io.spring.dependency-management") version "1.1.6"
 }
 
