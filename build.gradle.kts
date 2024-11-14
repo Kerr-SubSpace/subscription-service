@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 object Versions {
     const val JAVA = "21"
-    const val KOTLIN = "2.0.0"
+    const val KOTLIN = "2.0.21"
     const val GRADLE = "8.7"
     const val JIB = "3.4.2"
     const val SEMVER_PLUGIN = "1.10.0"
