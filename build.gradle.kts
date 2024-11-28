@@ -1,10 +1,8 @@
-import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 object Versions {
     const val JAVA = "21"
-    const val KOTLIN = "2.0.21"
+    const val KOTLIN = "2.1.0"
     const val GRADLE = "8.7"
     const val JIB = "3.4.2"
     const val SEMVER_PLUGIN = "1.10.0"
@@ -114,7 +112,6 @@ allOpen {
 
 tasks.withType<KotlinCompile> {
     compilerOptions {
-        jvmTarget.set(JVM_21)
         freeCompilerArgs.add("-Xjsr305=strict")
     }
 }
