@@ -1,0 +1,170 @@
+---
+description: Should return all subscriptions with pagination
+request:
+  method: GET
+  url: /subscriptions
+  queryParameters:
+    page: 0
+    size: 10
+response:
+  status: 200
+  headers:
+    Content-Type: application/json
+  body:
+    content:
+      - id: 1
+        name: Netflix
+        price: 14.99
+        status: ACTIVE
+        startDate: "2023-01-15"
+        endDate: "2024-01-15"
+        renewalPeriod: P1M
+        billingDate: "2023-01-15"
+      - id: 2
+        name: Spotify
+        price: 9.99
+        status: ACTIVE
+        startDate: "2023-02-10"
+        endDate: null
+        renewalPeriod: P1M
+        billingDate: "2023-02-10"
+    pageable:
+      sort:
+        sorted: false
+        unsorted: true
+        empty: true
+      offset: 0
+      pageNumber: 0
+      pageSize: 10
+      paged: true
+      unpaged: false
+    totalPages: 1
+    totalElements: 2
+    last: true
+    number: 0
+    sort:
+      sorted: false
+      unsorted: true
+      empty: true
+    size: 10
+    numberOfElements: 2
+    first: true
+    empty: false
+
+---
+description: Should create a new subscription
+request:
+  method: POST
+  url: /subscriptions
+  body:
+    name: "New Subscription"
+    price: 19.99
+    status: ACTIVE
+    startDate: "2024-01-01"
+    endDate: "2024-12-31"
+    renewalPeriod: P1Y
+    billingDate: "2024-01-01"
+  headers:
+    Content-Type: application/json
+response:
+  status: 201
+  headers:
+    Content-Type: application/json
+    Location: /subscriptions/3  # Assuming the new subscription gets ID 3
+  body:
+    id: 3
+    name: "New Subscription"
+    price: 19.99
+    status: ACTIVE
+    startDate: "2024-01-01"
+    endDate: "2024-12-31"
+    renewalPeriod: P1Y
+    billingDate: "2024-01-01"
+
+---
+description: Should update an existing subscription
+request:
+  method: PUT
+  url: /subscriptions/1
+  body:
+    price: 29.99
+    status: PAUSED
+    endDate: "2024-02-15"
+    billingDate: "2024-02-01"
+    renewalPeriod: P1M
+  headers:
+    Content-Type: application/json
+response:
+  status: 200
+  headers:
+    Content-Type: application/json
+  body:
+    id: 1
+    name: Netflix  # Name should remain unchanged
+    price: 29.99
+    status: PAUSED
+    startDate: "2023-01-15"  # Start date should remain unchanged
+    endDate: "2024-02-15"
+    renewalPeriod: P1M
+    billingDate: "2024-02-01"
+
+---
+description: Should delete a subscription
+request:
+  method: DELETE
+  url: /subscriptions/1
+response:
+  status: 204
+
+---
+description: Should return 404 when subscription not found (GET)
+request:
+  method: GET
+  url: /subscriptions/999
+response:
+  status: 404
+
+---
+description: Should return 404 when subscription not found (PUT)
+request:
+  method: PUT
+  url: /subscriptions/999
+  body:
+    price: 29.99
+  headers:
+    Content-Type: application/json
+response:
+  status: 404
+
+---
+description: Should return 404 when subscription not found (DELETE)
+request:
+  method: DELETE
+  url: /subscriptions/999
+response:
+  status: 404
+
+---
+description: Should return 400 when invalid data is provided (POST)
+request:
+  method: POST
+  url: /subscriptions
+  body:
+    name: ""  # Invalid: name should not be empty
+    price: -10  # Invalid: price should be positive
+  headers:
+    Content-Type: application/json
+response:
+  status: 400
+
+---
+description: Should return 400 when invalid data is provided (PUT)
+request:
+  method: PUT
+  url: /subscriptions/1
+  body:
+    price: -10  # Invalid: price should be positive
+  headers:
+    Content-Type: application/json
+response:
+  status: 400

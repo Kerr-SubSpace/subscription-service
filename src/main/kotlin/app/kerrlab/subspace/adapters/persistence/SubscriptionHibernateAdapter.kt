@@ -20,7 +20,7 @@ class SubscriptionHibernateAdapter(
         return try {
             val savedEntity = subscriptionJpaRepository.save(subscriptionEntity)
             Either.Right(savedEntity)
-        } catch (e: ConstraintViolationException) {
+        } catch (_: ConstraintViolationException) {
             Either.Left(SubscriptionError.AlreadyExists)
         } catch (e: Exception) {
             Either.Left(SubscriptionError.InvalidData(e.message ?: "Bad data when saving to DB"))
