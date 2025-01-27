@@ -17,7 +17,7 @@ plugins {
     kotlin("plugin.noarg") version "2.1.0"
     kotlin("plugin.allopen") version "2.1.0"
     kotlin("plugin.spring") version "2.1.0"
-    kotlin("plugin.jpa") version "2.1.0"
+    kotlin("plugin.jpa") version "2.1.10"
     id("com.google.cloud.tools.jib") version "3.4.4"
     id("com.figure.gradle.semver-plugin") version "1.10.0"
     id("org.graalvm.buildtools.native") version "0.10.4"
