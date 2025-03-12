@@ -20,7 +20,7 @@ plugins {
     kotlin("plugin.jpa") version "2.1.10"
     id("com.google.cloud.tools.jib") version "3.4.4"
     id("com.figure.gradle.semver-plugin") version "1.10.0"
-    id("org.graalvm.buildtools.native") version "0.10.5"
+    id("org.graalvm.buildtools.native") version "0.10.6"
     id("org.hibernate.orm") version "6.6.10.Final"
 
     id("org.springframework.boot") version "3.4.3"
