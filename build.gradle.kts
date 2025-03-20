@@ -14,7 +14,7 @@ object Versions {
 
 plugins {
     kotlin("jvm")
-    kotlin("plugin.noarg") version "2.1.10"
+    kotlin("plugin.noarg") version "2.1.20"
     kotlin("plugin.allopen") version "2.1.20"
     kotlin("plugin.spring") version "2.1.10"
     kotlin("plugin.jpa") version "2.1.10"
