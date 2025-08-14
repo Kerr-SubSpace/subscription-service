@@ -15,7 +15,7 @@ object Versions {
 plugins {
     kotlin("jvm")
     kotlin("plugin.noarg") version "2.2.10"
-    kotlin("plugin.allopen") version "2.2.0"
+    kotlin("plugin.allopen") version "2.2.10"
     kotlin("plugin.spring") version "2.2.10"
     kotlin("plugin.jpa") version "2.2.0"
     id("com.google.cloud.tools.jib") version "3.4.5"
