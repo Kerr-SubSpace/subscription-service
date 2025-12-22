@@ -5,7 +5,7 @@ pluginManagement {
         mavenLocal()
     }
     plugins {
-        kotlin("jvm") version "2.2.21"
+        kotlin("jvm") version "2.3.0"
     }
 }
 plugins {
