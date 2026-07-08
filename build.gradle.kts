@@ -21,7 +21,7 @@ plugins {
     id("com.google.cloud.tools.jib") version "3.5.2"
     id("com.figure.gradle.semver-plugin") version "1.10.0"
     id("org.graalvm.buildtools.native") version "0.11.4"
-    id("org.hibernate.orm") version "7.2.2.Final"
+    id("org.hibernate.orm") version "7.2.3.Final"
 
     id("org.springframework.boot") version "3.5.7"
     id("io.spring.dependency-management") version "1.1.7"
